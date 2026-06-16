@@ -69,6 +69,16 @@
   .spart .pl b{display:block;font-size:13.5px;color:#7f2020}
   .spart .pl .off{font-size:12px}
   .spart .pb{flex-shrink:0;background:#D9342C;color:#fff;font-size:12px;font-weight:700;padding:8px 13px;border-radius:9px;cursor:pointer}
+  /* Journée composée (matin/midi/aprem/soir) */
+  .prog{display:flex;flex-direction:column}
+  .moment{display:flex;gap:12px;padding:11px 0;border-bottom:1px dashed #e6dcc6}
+  .moment:last-child{border-bottom:none}
+  .moment .h{flex-shrink:0;width:70px;font-family:var(--hand2);font-size:14px;color:#8a8268;padding-top:1px}
+  .moment .ct{font-weight:700;font-size:14.5px;color:#2b2a23}
+  .moment .cs{font-size:12.5px;color:#8a8268;margin-top:1px}
+  .tag-free{display:inline-block;font-size:10.5px;font-weight:700;background:#E1F5EE;color:#04342C;padding:2px 8px;border-radius:6px;margin-top:6px}
+  .tag-pep{display:inline-flex;align-items:center;font-size:10.5px;font-weight:700;background:#fdecec;color:#a32d2d;padding:3px 4px 3px 9px;border-radius:7px;margin-top:6px}
+  .tag-pep .rb{background:#D9342C;color:#fff;padding:3px 8px;border-radius:6px;margin-left:6px}
 
   /* Visibilité avant / après ouverture */
   #book .bookmarks{opacity:0;transform:translateX(-26px);pointer-events:none;transition:opacity .5s .3s,transform .5s .3s}
@@ -286,23 +296,15 @@ const PAGES_SORTIE=[
    <div class="jtabs">
      <span class="jgrp">Est</span><span class="jgrp">journée</span><span class="jgrp">rivière &amp; cascade</span><span class="jgrp">2 marmailles</span><span class="jgrp">ti budget</span>
    </div>
-   <div class="postit" style="margin-top:14px">Glisse → 3 sorties, chacune avec son bon plan Pépite →</div>`},
- {sec:"Les sorties", accent:"#1B3A8C", stamp:"3 spots", titre:"3 sorties pou zot", num:"",
-  body:`<div class="scard">
-     <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px"><div class="st">Bassin La Paix — Ste-Suzanne</div><span class="szone" style="background:#E1F5EE;color:#04342C">Est</span></div>
-     <div class="smeta">🚗 30 min · baignade rivière · 👶 ok</div>
-     <div class="spart"><div class="pl"><span class="lbl">🍛 Partenaire Pépite</span><b>Ti-resto « Chez Mémé »</b><span class="off">cari camaron · −10% le midi</span></div><span class="pb">Réserver ›</span></div>
+   <div class="postit" style="margin-top:14px">Glisse → ta journée : des idées gratuites + un bon plan Pépite →</div>`},
+ {sec:"Le programme", accent:"#1B3A8C", stamp:"Est", titre:"Ta journée dans l'Est", num:"",
+  body:`<div class="prog">
+     <div class="moment"><div class="h">Matin</div><div style="flex:1;min-width:0"><div class="ct">Bassin La Paix — Ste-Suzanne</div><div class="cs">baignade rivière en famille</div><span class="tag-free">Gratuit</span></div></div>
+     <div class="moment"><div class="h">Midi</div><div style="flex:1;min-width:0"><div class="ct">Ti-resto « Chez Mémé »</div><div class="cs">cari camaron, les pieds dans le vert</div><span class="tag-pep">🍛 Partenaire Pépite · −10%<span class="rb">Réserver ›</span></span></div></div>
+     <div class="moment"><div class="h">Aprem</div><div style="flex:1;min-width:0"><div class="ct">Anse des Cascades — Ste-Rose</div><div class="cs">balade + kiosques sous cocotiers</div><span class="tag-free">Gratuit</span></div></div>
+     <div class="moment"><div class="h">Soir</div><div style="flex:1;min-width:0"><div class="ct">Coucher de soleil à Takamaka <span style="font-weight:400;color:#9a9079">(option)</span></div><div class="cs">point de vue sur les gorges</div><span class="tag-free">Gratuit</span></div></div>
    </div>
-   <div class="scard">
-     <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px"><div class="st">Canyoning à Sainte-Suzanne</div><span class="szone" style="background:#E1F5EE;color:#04342C">Est</span></div>
-     <div class="smeta">🚗 35 min · sensations · ados +</div>
-     <div class="spart"><div class="pl"><span class="lbl">🛶 Partenaire Pépite</span><b>Run Évasion · prestataire agréé</b><span class="off">demi-journée dès 45 €/pers</span></div><span class="pb">Réserver ›</span></div>
-   </div>
-   <div class="scard">
-     <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px"><div class="st">Week-end au vert — Plaine-des-Palmistes</div><span class="szone" style="background:#E1F5EE;color:#04342C">Hauts Est</span></div>
-     <div class="smeta">🚗 50 min · au frais · week-end</div>
-     <div class="spart"><div class="pl"><span class="lbl">🏡 Partenaire Pépite</span><b>Ti'kaz « La Varangue »</b><span class="off">dès 80 €/nuit · table d'hôte</span></div><span class="pb">Réserver ›</span></div>
-   </div>`},
+   <div class="postit" style="margin-top:12px">≈ 25 €/pers · 3 idées gratuites + 1 partenaire · raccourcis en demi-journée, ou ajoute le soir</div>`},
  {sec:"Ma checklist", accent:"#BA7517", stamp:"Kart kabri", titre:"À prévoir", num:"",
   body:`<div class="checkrow ok"><span class="cbox"></span>Glacière + pique-nique</div>
    <div class="checkrow ok"><span class="cbox"></span>Anti-moustiques — l'Est i pik</div>
