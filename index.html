@@ -27,6 +27,9 @@
   .phone .notch{position:absolute;width:118px;height:24px;background:#070b16;border-radius:0 0 16px 16px;left:50%;transform:translateX(-50%);margin-top:0;z-index:3}
   .phone .screen{width:100%;height:100%;border-radius:33px;overflow:hidden;background:#0e1626;position:relative}
   .phone iframe{width:100%;height:100%;border:none;display:block}
+  .phonecol{display:flex;flex-direction:column;align-items:center;gap:14px;flex-shrink:0}
+  .fullbtn{background:var(--jaune);color:#1a2440;font-weight:700;border:none;padding:11px 22px;border-radius:12px;cursor:pointer;font-family:inherit;font-size:14px}
+  .fullbtn:hover{filter:brightness(1.05)}
 
   /* Panneau guide */
   .guide{flex:1;min-width:300px;max-width:430px}
@@ -58,7 +61,10 @@
   </div>
 
   <div class="stage">
-    <div class="phone"><div class="notch"></div><div class="screen"><iframe id="appframe" src="app.html" title="Démo Sorties Péi"></iframe></div></div>
+    <div class="phonecol">
+      <div class="phone"><div class="notch"></div><div class="screen"><iframe id="appframe" src="app.html" title="Démo Sorties Péi"></iframe></div></div>
+      <button class="fullbtn" id="full">⤢ Voir en plein écran</button>
+    </div>
 
     <div class="guide">
       <div class="g-titre">La démo, expliquée pour toi, Ludo 👋</div>
@@ -97,6 +103,12 @@ document.getElementById('steps').innerHTML=STEPS.map((s,k)=>
 document.getElementById('next').onclick=()=>go(cur+1);
 document.getElementById('prev').onclick=()=>go(cur-1);
 frame.addEventListener('load',()=>setTimeout(()=>go(0),300));
+document.getElementById('full').onclick=function(){
+  var s=document.querySelector('.phone .screen');
+  if(s.requestFullscreen){ s.requestFullscreen().catch(function(){window.open('app.html','_blank');}); }
+  else if(s.webkitRequestFullscreen){ s.webkitRequestFullscreen(); }
+  else { window.open('app.html','_blank'); }
+};
 </script>
 </body>
 </html>

@@ -141,7 +141,8 @@
   .clip{position:relative}
   .docrow{display:flex;align-items:center;gap:11px;background:#fff;border:1px solid #eadfca;border-radius:9px;padding:11px 13px;margin-bottom:9px;box-shadow:0 2px 6px rgba(60,50,20,.05)}
   .docrow .e{font-size:20px}
-  .checkrow{display:flex;align-items:center;gap:11px;font-family:var(--hand2);font-size:18px;color:#3a382f;margin:7px 0;line-height:1.1}
+  .checkrow{display:flex;align-items:center;gap:11px;font-family:var(--hand2);font-size:18px;color:#3a382f;margin:7px 0;line-height:1.1;cursor:pointer}
+  .checkrow:active{transform:scale(.99)}
   .cbox{width:22px;height:22px;border:2px solid #b9ad90;border-radius:5px;flex-shrink:0;position:relative}
   .checkrow.ok .cbox{border-color:var(--vert)} .checkrow.ok{color:#9a9079}
   .checkrow.ok .cbox::after{content:"✓";position:absolute;inset:-6px 0 0 2px;font-family:var(--hand);font-size:26px;color:var(--vert)}
@@ -316,6 +317,16 @@ const PAGES_SORTIE=[
    <div class="docrow"><span class="e">🌿</span><div><b>Vanilleraie de Bois-Blanc</b><div style="font-size:12px;color:#9a9079">visite guidée −15% avec Pépite</div></div></div>
    <div class="docrow"><span class="e">🛶</span><div><b>Canyoning / kayak — Est</b><div style="font-size:12px;color:#9a9079">prestataire partenaire</div></div></div>
    <div class="docrow"><span class="e">🏡</span><div><b>Gîte — Plaine-des-Palmistes</b><div style="font-size:12px;color:#9a9079">week-end au frais, réserve en 1 clic</div></div></div>`},
+ {sec:"Souvenirs", accent:"#b45309", stamp:"Fait ✓", titre:"Ta sortie en images", num:"",
+  body:`<div style="display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap">
+     <div class="polaroid"><div class="photo" style="background:#cfe8d8">🏞️</div><div class="cap">Bassin La Paix</div></div>
+     <div class="postit" style="margin-top:8px">« La marmaille la geler mais la valé la peine » 💛</div>
+   </div>
+   <div class="note" style="margin-top:14px">Garde tes images → ta vidéo souvenir, à partager à la fami.</div>`},
+ {sec:"Mes spots", accent:"#0d9488", stamp:"Gardés", titre:"Mes endroits gardés", num:"",
+  body:`<div class="docrow"><span class="e">🏞️</span><div><b>Bassin La Paix — Ste-Suzanne</b><div style="font-size:12px;color:#9a9079">baignade rivière · gardé ❤</div></div></div>
+   <div class="docrow"><span class="e">🌅</span><div><b>Takamaka — point de vue</b><div style="font-size:12px;color:#9a9079">coucher de soleil · gardé ❤</div></div></div>
+   <div class="docrow"><span class="e">🍛</span><div><b>Ti-resto « Chez Mémé »</b><div style="font-size:12px;color:#9a9079">partenaire Pépite · gardé ❤</div></div></div>`},
  {sec:"Accueil invités", accent:"#7c3aed", stamp:"Découverte", titre:"Mes invités débarquent", num:"",
   body:`<div class="note">Parcours « best of » sur 3 jours :</div>
    <div class="note" style="font-size:18px">📍 J1 — Lagon de l'Ermitage + couché soleil Boucan</div>
@@ -325,7 +336,7 @@ const PAGES_SORTIE=[
 ];
 
 const COURTS_VOYAGE=["Sommaire","Aperçu","Jour","Idées","Docs","Check","Guide"];
-const COURTS_SORTIE=["Sortir","Sorties","Checklist","Pépite","Invités"];
+const COURTS_SORTIE=["Sortir","Sorties","Checklist","Pépite","Souvenirs","Spots","Invités"];
 let PAGES = PAGES_VOYAGE;
 let courts = COURTS_VOYAGE;
 
@@ -449,6 +460,7 @@ window.addEventListener('message',function(e){var d=e.data||{};try{
   else if(d.act==='open'){ ouvrirCarnet(d.mode||'sortie'); if(d.i){ setTimeout(function(){goTo(d.i);},850); } }
   else if(d.act==='goto'){ if(!document.body.classList.contains('co')) ouvrirCarnet(d.mode||'sortie'); goTo(d.i||0); }
 }catch(err){}});
+page.addEventListener('click',function(e){var r=e.target.closest('.checkrow');if(r)r.classList.toggle('ok');});
 render(cur); maj();
 </script>
 </body>
