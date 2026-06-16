@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prototype — Carnet Pix-Trip</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Patrick+Hand&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bleu:#1d4ed8; --coral:#f97316; --teal:#0d9488; --violet:#7c3aed; --vert:#16a34a; --or:#b45309;
+    --papier:#FBF6EA; --encre:#3a382f; --gris:#9a9079; --rule:#ece2cd; --marge:#e89f8b;
+    --hand:'Caveat','Segoe Script',cursive; --hand2:'Patrick Hand','Comic Sans MS',cursive;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;color:#e7ecf5;
+    min-height:100vh;background:radial-gradient(circle at 50% -10%, #28344d 0%, #0e1626 58%, #0a101c 100%);
+    display:flex;flex-direction:column;align-items:center;padding:24px 12px 40px}
+  .head{text-align:center;margin-bottom:16px}
+  .head h1{font-size:20px;font-weight:700;letter-spacing:-.3px}
+  .head p{font-size:12.5px;color:#9fb0c9;margin-top:4px}
+
+  .desk{perspective:1700px;width:100%;max-width:620px}
+  .book{position:relative;display:flex;align-items:flex-start;justify-content:flex-start}
+
+  /* === LE CARNET (page) — plus étroit === */
+  .pagewrap{position:relative;flex:0 1 432px;min-width:0;perspective:1500px}
+  .page{position:relative;width:100%;background:var(--papier);color:var(--encre);
+    border-radius:5px 14px 14px 5px;min-height:392px;padding:26px 28px 30px 50px;
+    box-shadow:0 24px 55px rgba(0,0,0,.5), inset 12px 0 0 -9px rgba(0,0,0,.07);
+    transform-origin:left center;
+    background-image:repeating-linear-gradient(var(--papier),var(--papier) 31px,var(--rule) 31px,var(--rule) 32px);
+    background-position:0 92px;background-clip:padding-box}
+  .page::before{content:"";position:absolute;top:0;bottom:0;left:34px;width:1.4px;background:var(--marge)}
+  .page.turn-fwd{animation:turnFwd var(--dur,.42s) ease-in-out}
+  .page.turn-bwd{animation:turnBwd var(--dur,.42s) ease-in-out}
+  @keyframes turnFwd{0%{transform:rotateY(0);filter:brightness(1)}49%{transform:rotateY(-90deg);filter:brightness(.7)}50%{transform:rotateY(90deg);filter:brightness(.7)}100%{transform:rotateY(0);filter:brightness(1)}}
+  @keyframes turnBwd{0%{transform:rotateY(0);filter:brightness(1)}49%{transform:rotateY(90deg);filter:brightness(.7)}50%{transform:rotateY(-90deg);filter:brightness(.7)}100%{transform:rotateY(0);filter:brightness(1)}}
+
+  /* === Couverture du carnet === */
+  .cover{position:absolute;inset:0;border-radius:5px 14px 14px 5px;overflow:hidden;cursor:pointer;z-index:6;
+    transform-origin:left center;backface-visibility:hidden;color:#fff;
+    background:linear-gradient(150deg,#21458f 0%,#15204a 72%);box-shadow:0 24px 55px rgba(0,0,0,.55);
+    transition:transform .8s cubic-bezier(.3,.06,.18,1)}
+  body.co .cover{transform:rotateY(-158deg);pointer-events:none}
+  .cv-strap{position:absolute;top:0;bottom:0;right:26px;width:15px;background:#0c1740;opacity:.55;box-shadow:-3px 0 9px rgba(0,0,0,.35)}
+  .cv-inner{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:28px}
+  .cv-tag{font-family:var(--hand2);letter-spacing:3px;font-size:11.5px;color:#9db4e8;margin-bottom:16px}
+  .cv-logo{width:80px;height:80px;border-radius:23px;background:linear-gradient(135deg,#2563eb,#f97316);
+    display:flex;align-items:center;justify-content:center;font-size:42px;box-shadow:0 12px 26px rgba(0,0,0,.45);margin-bottom:14px}
+  .cv-titre{font-family:var(--hand);font-size:48px;font-weight:700;line-height:.85}
+  .cv-sous{font-size:12px;color:#aec0ea;letter-spacing:2px;margin-top:6px;text-transform:uppercase}
+  .cv-stamps{display:flex;gap:14px;margin-top:20px}
+  .cv-st{border:2px solid #6f8fd6;color:#bcd0f5;border-radius:7px;padding:5px 9px;font-family:var(--hand2);font-size:13px;transform:rotate(var(--r));opacity:.85}
+  .cv-open{margin-top:24px;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.28);padding:10px 18px;border-radius:30px;font-weight:600;font-size:14px}
+  .cv-choix{display:flex;flex-direction:column;gap:10px;margin-top:22px;width:84%}
+  .cv-btn{background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.32);color:#fff;font-weight:600;font-size:14px;padding:12px 16px;border-radius:14px;cursor:pointer;text-align:center;transition:.15s}
+  .cv-btn:hover{background:rgba(255,255,255,.28)}
+  /* Cartes de sortie péi */
+  .scard{background:#fff;border:1px solid #eadfca;border-radius:12px;padding:12px 14px;margin-bottom:11px;box-shadow:0 2px 6px rgba(60,50,20,.05)}
+  .scard .st{font-weight:700;font-size:15px;color:#2b2a23}
+  .szone{flex-shrink:0;font-size:11px;font-weight:700;padding:3px 8px;border-radius:7px}
+  .smeta{font-size:12px;color:#8a8268;margin-top:6px}
+  .spep{display:inline-flex;align-items:center;gap:5px;font-size:12px;background:#fdecec;color:#a32d2d;padding:4px 9px;border-radius:7px;margin-top:8px;font-weight:700}
+  .spart{margin-top:10px;background:#fdf3f3;border:1px solid #f3d0d0;border-radius:11px;padding:10px 12px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .spart .pl{font-size:12px;color:#a32d2d;line-height:1.32}
+  .spart .pl .lbl{font-family:var(--hand2);font-size:11.5px;opacity:.85;display:block}
+  .spart .pl b{display:block;font-size:13.5px;color:#7f2020}
+  .spart .pl .off{font-size:12px}
+  .spart .pb{flex-shrink:0;background:#D9342C;color:#fff;font-size:12px;font-weight:700;padding:8px 13px;border-radius:9px;cursor:pointer}
+  /* Journée composée (matin/midi/aprem/soir) */
+  .prog{display:flex;flex-direction:column}
+  .moment{display:flex;gap:12px;padding:11px 0;border-bottom:1px dashed #e6dcc6}
+  .moment:last-child{border-bottom:none}
+  .moment .h{flex-shrink:0;width:70px;font-family:var(--hand2);font-size:14px;color:#8a8268;padding-top:1px}
+  .moment .ct{font-weight:700;font-size:14.5px;color:#2b2a23}
+  .moment .cs{font-size:12.5px;color:#8a8268;margin-top:1px}
+  .tag-free{display:inline-block;font-size:10.5px;font-weight:700;background:#E1F5EE;color:#04342C;padding:2px 8px;border-radius:6px;margin-top:6px}
+  .tag-pep{display:inline-flex;align-items:center;font-size:10.5px;font-weight:700;background:#fdecec;color:#a32d2d;padding:3px 4px 3px 9px;border-radius:7px;margin-top:6px}
+  .tag-pep .rb{background:#D9342C;color:#fff;padding:3px 8px;border-radius:6px;margin-left:6px}
+  .moment .hbtn{background:none;border:none;cursor:pointer;text-align:left;padding:1px 0 0}
+  .moment.off{opacity:.5}
+  .moment.off .hbtn{text-decoration:line-through}
+  .reroll{flex-shrink:0;align-self:center;width:30px;height:30px;border-radius:50%;background:#f3ead6;border:1px solid #e6dcc6;color:#6a6450;font-size:15px;cursor:pointer;transition:.12s}
+  .reroll:hover{background:#e9dcc0;transform:rotate(90deg)}
+
+  /* Visibilité avant / après ouverture */
+  #book .bookmarks{opacity:0;transform:translateX(-26px);pointer-events:none;transition:opacity .5s .3s,transform .5s .3s}
+  body.co #book .bookmarks{opacity:1;transform:none;pointer-events:auto}
+  .controls{opacity:0;pointer-events:none;transition:opacity .45s .35s}
+  body.co .controls{opacity:1;pointer-events:auto}
+  .revoir{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.22);color:#d3deef;font-size:13px;
+    cursor:pointer;padding:8px 18px;border-radius:30px;font-weight:600}
+  .revoir:hover{background:rgba(255,255,255,.18)}
+
+  /* === Navigateur de jours (programme) === */
+  .jtabs{display:flex;align-items:flex-start;gap:5px;flex-wrap:wrap;margin:2px 0 4px}
+  .jtab{background:#fff;color:#6a6450;font-weight:700;font-size:12px;padding:6px 11px 12px;cursor:pointer;font-family:inherit;
+    clip-path:polygon(0 0,100% 0,100% calc(100% - 8px),50% 100%,0 calc(100% - 8px));
+    filter:drop-shadow(0 2px 2px rgba(0,0,0,.14))}
+  .jtab.on{background:var(--accent,#f97316);color:#fff;padding-bottom:15px;font-size:13px}
+  .jdots{align-self:center;color:#b9ad90;font-weight:700;padding:0 1px}
+  .jlabel{font-family:var(--hand2);font-size:14.5px;color:#8a8268;margin:5px 0 12px}
+  .jgrp{align-self:center;font-family:var(--hand2);font-size:12.5px;color:#8a8268;background:#f1e7d4;padding:3px 9px;border-radius:7px}
+  /* Sommaire */
+  .somm{margin-top:10px}
+  .somm-leg{display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-bottom:1px dashed #e6dcc6}
+  .somm-leg:last-child{border-bottom:none}
+  .somm-dot{width:13px;height:13px;border-radius:50%;margin-top:4px;flex-shrink:0;box-shadow:0 0 0 3px rgba(0,0,0,.05)}
+  .somm-leg b{font-size:15.5px;color:#2b2a23}
+  .somm-d{font-family:var(--hand2);font-size:14.5px;color:#8a8268}
+  /* Élastique qui se déclipse à l'ouverture */
+  .cv-strap{transition:opacity .45s,transform .45s}
+  body.co .cv-strap{opacity:0;transform:translateX(46px)}
+
+  .pg-sec{font-family:var(--hand2);font-size:15px;color:var(--accent,#1d4ed8);letter-spacing:.3px}
+  .pg-titre{font-family:var(--hand);font-size:34px;font-weight:700;color:#2b2a23;line-height:1;margin-top:-2px}
+  .pg-sous{font-size:12px;color:var(--gris);margin-top:5px}
+  .pg-num{position:absolute;bottom:14px;right:22px;font-family:var(--hand);font-size:18px;color:var(--gris)}
+  .pg-body{margin-top:20px;position:relative;z-index:1}
+  .stamp{position:absolute;top:20px;right:24px;border:2.5px solid var(--accent,#1d4ed8);color:var(--accent,#1d4ed8);
+    border-radius:8px;padding:5px 9px;font-family:var(--hand2);font-size:13px;letter-spacing:.5px;
+    transform:rotate(-9deg);opacity:.85;text-transform:uppercase}
+
+  /* === Éléments scrapbook === */
+  .tape{position:absolute;width:78px;height:24px;background:rgba(249,115,22,.32);border:1px solid rgba(255,255,255,.25);
+    transform:rotate(-5deg);top:-11px;left:24px;backdrop-filter:blur(1px)}
+  .tape.bleu{background:rgba(29,78,216,.26)} .tape.teal{background:rgba(13,148,136,.26)}
+  .polaroid{display:inline-block;background:#fff;padding:9px 9px 30px;border-radius:3px;box-shadow:0 8px 18px rgba(0,0,0,.18);
+    transform:rotate(-3deg);position:relative}
+  .polaroid .photo{width:120px;height:96px;border-radius:2px;display:flex;align-items:center;justify-content:center;font-size:48px}
+  .polaroid .cap{font-family:var(--hand);font-size:19px;color:#4a463a;text-align:center;position:absolute;left:0;right:0;bottom:5px}
+  .postit{display:inline-block;background:#fff7b0;padding:12px 14px;font-family:var(--hand);font-size:19px;color:#4a463a;
+    line-height:1.15;box-shadow:0 6px 14px rgba(0,0,0,.14);transform:rotate(2deg);max-width:185px}
+  .postit.v{background:#c7f0d8;transform:rotate(-2deg)} .postit.b{background:#cfe2ff}
+  .ticket{background:#fff;border-radius:10px;box-shadow:0 6px 14px rgba(0,0,0,.12);display:flex;align-items:stretch;
+    overflow:hidden;margin:6px 0;transform:rotate(-1deg)}
+  .ticket .main{flex:1;padding:11px 14px} .ticket .stub{border-left:2px dashed #d9cdb3;padding:11px 12px;display:flex;flex-direction:column;justify-content:center;align-items:center}
+  .ticket .ty{font-family:var(--hand2);font-size:12px;color:#9a9079} .ticket .tt{font-weight:700;font-size:15px;color:#2b2a23}
+  .clip{position:relative}
+  .docrow{display:flex;align-items:center;gap:11px;background:#fff;border:1px solid #eadfca;border-radius:9px;padding:11px 13px;margin-bottom:9px;box-shadow:0 2px 6px rgba(60,50,20,.05)}
+  .docrow .e{font-size:20px}
+  .checkrow{display:flex;align-items:center;gap:11px;font-family:var(--hand2);font-size:18px;color:#3a382f;margin:7px 0;line-height:1.1}
+  .cbox{width:22px;height:22px;border:2px solid #b9ad90;border-radius:5px;flex-shrink:0;position:relative}
+  .checkrow.ok .cbox{border-color:var(--vert)} .checkrow.ok{color:#9a9079}
+  .checkrow.ok .cbox::after{content:"✓";position:absolute;inset:-6px 0 0 2px;font-family:var(--hand);font-size:26px;color:var(--vert)}
+  .gauge{height:13px;background:#eadfca;border-radius:20px;overflow:hidden;margin:8px 0;border:1px solid #e0d4ba}
+  .gauge>i{display:block;height:100%;background:linear-gradient(90deg,#16a34a,#22c55e)}
+  .note{font-family:var(--hand);font-size:21px;color:#5a5340;line-height:1.25;margin:6px 0}
+  .ginfo{font-size:13.5px;color:#5a5340;line-height:1.5;margin-bottom:9px;padding-left:4px}
+  .ginfo b{color:#2b2a23}
+
+  /* === Marque-pages : actif gros, autres en retrait, hors du carnet === */
+  .bookmarks{display:flex;flex-direction:column;gap:8px;margin-top:54px;margin-left:-14px;flex:0 0 auto;z-index:3}
+  .bm{position:relative;text-align:left;border:none;color:#fff;cursor:pointer;overflow:hidden;font-weight:700;
+    transition:.2s cubic-bezier(.2,.7,.3,1);
+    padding:8px 22px 8px 16px;font-size:12px;opacity:.72;transform:translateX(-8px) scale(.94)}
+  .bm small{display:block;font-family:var(--hand2);font-size:11px;opacity:.9}
+  .bm:hover{opacity:.96;transform:translateX(2px) scale(.97)}
+  .bm.actif{padding:13px 26px 13px 18px;font-size:15px;opacity:1;transform:translateX(20px) scale(1)}
+  .bm.actif small{font-size:12px}
+  .bm::after{content:"";position:absolute;inset:0;background:linear-gradient(rgba(255,255,255,.22),rgba(255,255,255,0) 50%);pointer-events:none}
+  /* Style A — rubans fourchus */
+  .bs-rubans .bm{clip-path:polygon(0 0,100% 0,calc(100% - 11px) 50%,100% 100%,0 100%);filter:drop-shadow(-1px 5px 7px rgba(0,0,0,.32))}
+  .bs-rubans .bm.actif{filter:drop-shadow(-2px 8px 13px rgba(0,0,0,.46))}
+  /* Style B — onglets arrondis */
+  .bs-onglets .bm{border-radius:0 16px 16px 0;box-shadow:-1px 4px 11px rgba(0,0,0,.28)}
+  .bs-onglets .bm.actif{box-shadow:-2px 7px 17px rgba(0,0,0,.42)}
+  /* Style C — étiquettes de bagage */
+  .bs-etiquettes .bm{border-radius:6px 13px 13px 6px;box-shadow:-1px 4px 11px rgba(0,0,0,.3);padding-left:27px}
+  .bs-etiquettes .bm.actif{padding-left:29px}
+  .bs-etiquettes .bm::before{content:"";position:absolute;left:11px;top:50%;transform:translateY(-50%);width:8px;height:8px;border-radius:50%;background:var(--papier);z-index:2}
+
+  /* === Contrôles === */
+  .controls{margin-top:26px;display:flex;flex-direction:column;align-items:center;gap:13px;color:#aebbd0}
+  .ctl-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:center}
+  .arrow{width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.92);border:none;color:#33445f;
+    font-size:20px;cursor:pointer;box-shadow:0 8px 18px rgba(0,0,0,.3)}
+  .arrow:hover{background:#fff} .arrow:disabled{opacity:.3;cursor:default}
+  .seg{display:inline-flex;background:rgba(255,255,255,.08);border-radius:11px;padding:4px}
+  .seg button{background:none;border:none;color:#aebbd0;font-weight:600;font-size:13px;padding:8px 16px;border-radius:8px;cursor:pointer}
+  .seg button.on{background:#fff;color:#1d2840}
+  .hint{font-size:12.5px;color:#8395b0;text-align:center;max-width:430px;line-height:1.55}
+  @media(max-width:540px){
+    .page{flex-basis:300px;padding:24px 18px 28px 44px;min-height:410px}
+    .pg-titre{font-size:29px}
+    .bm{font-size:11px} .bm.actif{font-size:13px;transform:translateX(14px) scale(1)}
+  }
+</style>
+</head>
+<body class="bs-onglets">
+  <div class="head">
+    <h1>🧳 Prototype — Carnet Pix-Trip</h1>
+    <p>Démo hors-ligne · ne touche pas à l'appli en ligne</p>
+  </div>
+
+  <div class="desk">
+    <div class="book" id="book">
+      <div class="pagewrap">
+        <div class="page" id="page"></div>
+        <div class="cover" id="cover">
+          <div class="cv-strap"></div>
+          <div class="cv-inner">
+            <div class="cv-tag">PIX · I · ART</div>
+            <div class="cv-logo">🧳</div>
+            <div class="cv-titre">Pix-Trip</div>
+            <div class="cv-sous">voyages &amp; sorties péi</div>
+            <div class="cv-choix">
+              <button class="cv-btn" onclick="ouvrirCarnet('voyage')">✈️ Voyage à l'extérieur</button>
+              <button class="cv-btn" onclick="ouvrirCarnet('sortie')">🌴 Sortie péi</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="bookmarks" id="bookmarks"></div>
+    </div>
+  </div>
+
+  <div class="controls">
+    <div class="ctl-row">
+      <button class="arrow" id="prev" aria-label="Page précédente">‹</button>
+      <div class="seg" id="vitesse">
+        <button data-d="0.42" class="on">Rapide</button>
+        <button data-d="0.95">Lent</button>
+      </div>
+      <button class="arrow" id="next" aria-label="Page suivante">›</button>
+    </div>
+    <div class="ctl-row"><span style="font-size:12.5px;color:#9fb0c9">Marque-pages :</span>
+      <div class="seg" id="bmstyle">
+        <button data-s="bs-rubans">Rubans</button>
+        <button data-s="bs-onglets" class="on">Onglets</button>
+        <button data-s="bs-etiquettes">Étiquettes</button>
+      </div>
+    </div>
+    <div class="hint">👉 Attrape un <b>marque-page</b>, utilise <b>‹ ›</b> (ou ← → du clavier), ou <b>glisse</b> la page. Teste les styles de marque-pages et la vitesse de tournage.</div>
+    <button id="revoir" class="revoir">↩ Refermer le carnet</button>
+  </div>
+
+<script>
+const PAGES_VOYAGE=[
+ {sec:"Sommaire", accent:"#475569", stamp:"Voyage", titre:"L'itinéraire", sous:"Réunion · Bangkok · Japon · 17 jours", num:"",
+  body:`<div class="somm">
+     <div class="somm-leg"><span class="somm-dot" style="background:#f97316"></span><div><b>Bangkok</b> · Thaïlande<div class="somm-d">10 – 12 mars · 2 jours</div></div></div>
+     <div class="somm-leg"><span class="somm-dot" style="background:#1d4ed8"></span><div><b>Tokyo</b> · Japon<div class="somm-d">12 – 17 mars · 5 jours</div></div></div>
+     <div class="somm-leg"><span class="somm-dot" style="background:#0d9488"></span><div><b>Kyoto</b> · Japon<div class="somm-d">17 – 22 mars · 5 jours</div></div></div>
+     <div class="somm-leg"><span class="somm-dot" style="background:#7c3aed"></span><div><b>Osaka</b> · Japon<div class="somm-d">22 – 27 mars · 5 jours</div></div></div>
+   </div>`},
+ {sec:"Vue d'ensemble", accent:"#1d4ed8", stamp:"Japon", titre:"Mon voyage", sous:"mar 10 → lun 27 mars 2027 · 6 000 € d'enveloppe", num:"~ 1 ~",
+  body:`<div style="display:flex;gap:18px;align-items:flex-start;flex-wrap:wrap">
+     <div class="polaroid"><div class="photo" style="background:#dbeafe">🗼</div><div class="cap">Tokyo, enfin !</div></div>
+     <div class="postit b" style="margin-top:8px">17 jours · 4 vols<br>Réunion → Bangkok → Japon ✈️</div>
+   </div>
+   <div style="margin-top:14px"><div class="note">💰 Budget — déjà 1 280 € · reste 2 620 €</div>
+     <div class="gauge"><i style="width:38%"></i></div></div>`},
+ {sec:"Jour par jour", accent:"#f97316", stamp:"Jour 3", titre:"Jeudi 12 — Tokyo", sous:"3 étapes · 138 €", num:"~ 2 ~",
+  body:`<div class="jtabs">
+     <span class="jgrp">Bangkok</span><button class="jtab">J1</button><button class="jtab">J2</button>
+     <span class="jgrp">Tokyo</span><button class="jtab on">J3</button><button class="jtab">J4</button><button class="jtab">J5</button>
+     <span class="jdots">…</span><button class="jtab">J17</button>
+   </div>
+   <div class="jlabel">📍 Tokyo · 2ᵉ jour · glisse pour changer de jour</div>
+   <div class="ticket"><div class="main"><div class="ty">✈️ Vol · 08:00</div><div class="tt">Bangkok → Tokyo</div></div><div class="stub"><div class="ty">réf.</div><div class="tt">NH808</div></div></div>
+   <div class="note">15:00 — TeamLab Planets ⭐</div>
+   <div class="note">20:00 — Ramen à Shinjuku 🍜</div>`},
+ {sec:"Idées & adresses", accent:"#0d9488", stamp:"Idées", titre:"Coups de cœur", sous:"3 idées épinglées · 5 adresses", num:"~ 3 ~",
+  body:`<div style="display:flex;gap:14px;flex-wrap:wrap;align-items:flex-start">
+     <div class="postit">Gion au coucher du soleil 🌅</div>
+     <div class="postit v">✅ Marché Nishiki<br><span style="font-size:15px">→ ajouté au Jour 6</span></div>
+   </div>
+   <div style="margin-top:14px" class="polaroid"><div class="photo" style="background:#ccfbf1">⛩️</div><div class="cap">Kyoto · à voir</div></div>
+   <div class="note" style="display:inline-block;margin-left:16px">📒 Ichiran Ramen ★★★★</div>`},
+ {sec:"Documents", accent:"#7c3aed", stamp:"Docs", titre:"Mes papiers", sous:"rangés, en privé", num:"~ 4 ~",
+  body:`<div class="postit b" style="position:relative">📎 le coffre du voyage</div>
+   <div style="margin-top:12px">
+     <div class="docrow"><span class="e">🪪</span><div><b>Passeport</b><div style="font-size:12px;color:#9a9079">valable jusqu'en 2029</div></div></div>
+     <div class="docrow"><span class="e">🎫</span><div><b>Billets d'avion (QR)</b><div style="font-size:12px;color:#9a9079">aller-retour</div></div></div>
+     <div class="docrow"><span class="e">📄</span><div><b>Assurance voyage</b><div style="font-size:12px;color:#9a9079">attestation PDF</div></div></div>
+   </div>`},
+ {sec:"Checklist", accent:"#16a34a", stamp:"À faire", titre:"À ne pas oublier", sous:"5 / 8 faits", num:"~ 5 ~",
+  body:`<div class="gauge"><i style="width:62%"></i></div>
+   <div class="checkrow ok"><span class="cbox"></span>Passeport (valable 6 mois)</div>
+   <div class="checkrow ok"><span class="cbox"></span>Adaptateur japonais</div>
+   <div class="checkrow ok"><span class="cbox"></span>Yens en espèces</div>
+   <div class="checkrow"><span class="cbox"></span>Carte bancaire sans frais</div>
+   <div class="checkrow"><span class="cbox"></span>Trousse à pharmacie</div>`},
+ {sec:"Le guide", accent:"#b45309", stamp:"Aide", titre:"Mode d'emploi", sous:"comment se servir du carnet", num:"~ 6 ~",
+  body:`<div class="ginfo">🔖 <b>Les marque-pages</b> à droite ouvrent chaque section — l'actif sort et prend sa couleur.</div>
+   <div class="ginfo">👉 <b>Glisse</b> la page (ou ‹ ›) pour tourner, dans un sens ou dans l'autre.</div>
+   <div class="ginfo">📮 <b>Le tampon</b> en haut à droite rappelle où tu es, comme dans un vrai passeport.</div>
+   <div class="postit" style="margin-top:8px">Astuce : note tout au fil de l'eau, ça devient ton souvenir 💛</div>`}
+];
+
+const PAGES_SORTIE=[
+ {sec:"Zot i sort ?", accent:"#2E8B57", stamp:"Péi", titre:"Kosa nou fé ?", num:"",
+  body:`<div style="display:flex;gap:10px;margin-bottom:14px">
+     <div class="postit v" style="flex:1;text-align:center">👨‍👩‍👧 Famille péi</div>
+     <div class="postit b" style="flex:1;text-align:center;opacity:.6">✈️ J'akeu mon zinvité</div>
+   </div>
+   <div class="note">Mon envie ce week-end :</div>
+   <div class="jtabs">
+     <span class="jgrp">Est</span><span class="jgrp">journée</span><span class="jgrp">rivière &amp; cascade</span><span class="jgrp">2 marmailles</span><span class="jgrp">ti budget</span>
+   </div>
+   <div class="postit" style="margin-top:14px">Glisse → ta journée : des idées gratuites + un bon plan Pépite →</div>`},
+ {sec:"Le programme", accent:"#1B3A8C", stamp:"Est", titre:"Ta journée dans l'Est", num:"", journee:true,
+  body:`<div class="note" style="margin-bottom:6px">Compose ta journée 🌿</div><div id="journee"></div>`},
+ {sec:"Ma checklist", accent:"#BA7517", stamp:"Kart kabri", titre:"À prévoir", num:"",
+  body:`<div class="checkrow ok"><span class="cbox"></span>Glacière + pique-nique</div>
+   <div class="checkrow ok"><span class="cbox"></span>Anti-moustiques — l'Est i pik</div>
+   <div class="checkrow ok"><span class="cbox"></span>K-way — l'Est i pleut vite</div>
+   <div class="checkrow"><span class="cbox"></span>Savates d'eau pour le bassin</div>
+   <div class="checkrow"><span class="cbox"></span>Serviettes + change marmaille</div>
+   <div class="checkrow"><span class="cbox"></span>Sac poubelle — nou lès rien</div>`},
+ {sec:"Bons plans", accent:"#D9342C", stamp:"Pépite", titre:"Lé bon plan otour", num:"",
+  body:`<div class="docrow"><span class="e">🍛</span><div><b>Ti-resto créole — Ste-Anne</b><div style="font-size:12px;color:#9a9079">cari camaron, −10% le midi</div></div></div>
+   <div class="docrow"><span class="e">🌿</span><div><b>Vanilleraie de Bois-Blanc</b><div style="font-size:12px;color:#9a9079">visite guidée −15% avec Pépite</div></div></div>
+   <div class="docrow"><span class="e">🛶</span><div><b>Canyoning / kayak — Est</b><div style="font-size:12px;color:#9a9079">prestataire partenaire</div></div></div>
+   <div class="docrow"><span class="e">🏡</span><div><b>Gîte — Plaine-des-Palmistes</b><div style="font-size:12px;color:#9a9079">week-end au frais, réserve en 1 clic</div></div></div>`},
+ {sec:"Accueil invités", accent:"#7c3aed", stamp:"Découverte", titre:"Mes invités débarquent", num:"",
+  body:`<div class="note">Parcours « best of » sur 3 jours :</div>
+   <div class="note" style="font-size:18px">📍 J1 — Lagon de l'Ermitage + couché soleil Boucan</div>
+   <div class="note" style="font-size:18px">📍 J2 — Lever de soleil au volcan + Plaine des Sables</div>
+   <div class="note" style="font-size:18px">📍 J3 — Cirque de Cilaos + cari péi chez l'habitant</div>
+   <div class="postit" style="margin-top:12px">À leur dire : une laine pour les Hauts, jamais se baigner hors lagon (requin), le soleil i tape fort 🌞</div>`}
+];
+
+const COURTS_VOYAGE=["Sommaire","Aperçu","Jour","Idées","Docs","Check","Guide"];
+const COURTS_SORTIE=["Sortir","Sorties","Checklist","Pépite","Invités"];
+let PAGES = PAGES_VOYAGE;
+let courts = COURTS_VOYAGE;
+
+const page=document.getElementById('page');
+const bmWrap=document.getElementById('bookmarks');
+let cur=0, dur=0.42, busy=false;
+
+function render(i){
+  const p=PAGES[i];
+  page.style.setProperty('--accent',p.accent);
+  page.innerHTML=`<div class="pg-sec">${p.sec}</div><div class="pg-titre">${p.titre}</div>
+    <div class="pg-sous">${p.sous||''}</div><div class="stamp">${p.stamp}</div>
+    <div class="pg-body">${p.body}</div><div class="pg-num">~ ${i+1} ~</div>`;
+  if(p.journee){ try{renderJournee();}catch(e){} }
+}
+const JMOMENTS={
+ matin:[
+  {t:"Bassin La Paix — Ste-Suzanne",d:"baignade rivière en famille"},
+  {t:"Grand Étang — Saint-Benoît",d:"balade autour de l'étang"},
+  {t:"Marché forain de Saint-André",d:"l'ambiance péi du matin"},
+  {t:"Canyoning à Sainte-Suzanne",d:"sensations en rivière",pep:"Run Évasion · dès 45 €"}
+ ],
+ midi:[
+  {t:"Ti-resto « Chez Mémé »",d:"cari camaron, les pieds dans le vert",pep:"Partenaire Pépite · −10%"},
+  {t:"Pique-nique au kiosque",d:"kart kabri sorti du coffre"},
+  {t:"Camion-bar de Bras-Panon",d:"bouchons &amp; sandwichs péi",pep:"Partenaire Pépite"},
+  {t:"Table d'hôte à Salazie",d:"chouchou farci maison",pep:"Partenaire Pépite · sur résa"}
+ ],
+ aprem:[
+  {t:"Anse des Cascades — Ste-Rose",d:"balade + kiosques sous cocotiers"},
+  {t:"Vanilleraie de Bois-Blanc",d:"visite guidée parfumée",pep:"Partenaire Pépite · −15%"},
+  {t:"Cascade Niagara — Ste-Suzanne",d:"baignade selon le débit"},
+  {t:"Takamaka — point de vue",d:"les gorges vertigineuses"}
+ ],
+ soir:[
+  {t:"Coucher de soleil à Takamaka",d:"point de vue sur les gorges"},
+  {t:"Apéro bord de mer — Ste-Rose",d:"snack péi face à l'océan",pep:"Partenaire Pépite"},
+  {t:"Retour tranquille",d:"on rentre se reposer"}
+ ]
+};
+const JORDER=['matin','midi','aprem','soir'], JLABEL={matin:'Matin',midi:'Midi',aprem:'Aprem',soir:'Soir'};
+let journeeState={matin:{i:0,on:true},midi:{i:0,on:true},aprem:{i:0,on:true},soir:{i:0,on:true}};
+function renderJournee(){
+  const el=document.getElementById('journee'); if(!el) return;
+  let free=0,pep=0,h='<div class="prog">';
+  JORDER.forEach(m=>{
+    const s=journeeState[m], alts=JMOMENTS[m], a=alts[s.i%alts.length];
+    if(s.on){ a.pep?pep++:free++; }
+    h+=`<div class="moment ${s.on?'':'off'}"><button class="h hbtn" onclick="toggleMoment('${m}')">${JLABEL[m]}</button><div style="flex:1;min-width:0">`;
+    if(s.on){ h+=`<div class="ct">${a.t}</div><div class="cs">${a.d}</div>${a.pep?`<span class="tag-pep">🎟️ ${a.pep}<span class="rb">Réserver ›</span></span>`:`<span class="tag-free">Gratuit</span>`}`; }
+    else { h+=`<div class="cs" style="padding:5px 0">— moment libre —</div>`; }
+    h+=`</div>`;
+    if(s.on) h+=`<button class="reroll" onclick="rerollMoment('${m}')" title="Une autre idée">↻</button>`;
+    h+=`</div>`;
+  });
+  h+='</div>';
+  h+=`<div class="postit" style="margin-top:12px">${free} gratuit${free>1?'s':''} + ${pep} partenaire${pep>1?'s':''} · clique un moment pour l'enlever · ↻ pour une autre idée</div>`;
+  el.innerHTML=h;
+}
+function rerollMoment(m){ journeeState[m].i++; renderJournee(); if(navigator.vibrate)navigator.vibrate(8); }
+function toggleMoment(m){ journeeState[m].on=!journeeState[m].on; renderJournee(); }
+
+function buildBookmarks(){
+  bmWrap.innerHTML=PAGES.map((p,i)=>
+    `<button class="bm ${i===cur?'actif':''}" style="background:${p.accent}" data-i="${i}"><small>${i+1}</small>${courts[i]||''}</button>`).join('');
+}
+function maj(){
+  buildBookmarks();
+  document.getElementById('prev').disabled=(cur===0);
+  document.getElementById('next').disabled=(cur===PAGES.length-1);
+}
+function goTo(i){
+  i=Math.max(0,Math.min(PAGES.length-1,i));
+  if(i===cur||busy) return;
+  const fwd=i>cur;
+  cur=i;
+  try{localStorage.setItem('pxt_page',cur)}catch(e){}
+  if(navigator.vibrate)navigator.vibrate(12);
+  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){ render(cur); maj(); return; }
+  busy=true;
+  page.style.setProperty('--dur',dur+'s');
+  page.classList.add(fwd?'turn-fwd':'turn-bwd');
+  setTimeout(()=>{ render(cur); maj(); }, dur*1000*0.5);
+  setTimeout(()=>{ page.classList.remove('turn-fwd','turn-bwd'); busy=false; }, dur*1000+70);
+}
+
+bmWrap.addEventListener('click',e=>{const b=e.target.closest('.bm');if(b)goTo(+b.dataset.i);});
+document.getElementById('prev').onclick=()=>goTo(cur-1);
+document.getElementById('next').onclick=()=>goTo(cur+1);
+document.addEventListener('keydown',e=>{ if(e.key==='ArrowRight')goTo(cur+1); if(e.key==='ArrowLeft')goTo(cur-1); });
+document.getElementById('vitesse').addEventListener('click',e=>{
+  const b=e.target.closest('button');if(!b)return;
+  dur=parseFloat(b.dataset.d);
+  [...e.currentTarget.children].forEach(x=>x.classList.toggle('on',x===b));
+});
+document.getElementById('bmstyle').addEventListener('click',e=>{
+  const b=e.target.closest('button');if(!b)return;
+  document.body.classList.remove('bs-rubans','bs-onglets','bs-etiquettes');
+  document.body.classList.add(b.dataset.s);
+  [...e.currentTarget.children].forEach(x=>x.classList.toggle('on',x===b));
+});
+let sx=0,sy=0,down=false;
+page.addEventListener('pointerdown',e=>{down=true;sx=e.clientX;sy=e.clientY;});
+window.addEventListener('pointerup',e=>{
+  if(!down)return;down=false;
+  const dx=e.clientX-sx, dy=e.clientY-sy;
+  if(Math.abs(dx)>45 && Math.abs(dx)>Math.abs(dy)) goTo(dx<0?cur+1:cur-1);
+});
+
+function ouvrirCarnet(mode){
+  PAGES = (mode==='sortie') ? PAGES_SORTIE : PAGES_VOYAGE;
+  courts = (mode==='sortie') ? COURTS_SORTIE : COURTS_VOYAGE;
+  cur=0; render(0); maj();
+  document.body.classList.add('co');
+}
+document.getElementById('revoir').onclick=()=>document.body.classList.remove('co');
+
+try{cur=Math.min(PAGES.length-1,Math.max(0,parseInt(localStorage.getItem('pxt_page'))||0))}catch(e){}
+window.addEventListener('message',function(e){var d=e.data||{};try{
+  if(d.act==='cover'){ document.body.classList.remove('co'); }
+  else if(d.act==='open'){ ouvrirCarnet(d.mode||'sortie'); if(d.i){ setTimeout(function(){goTo(d.i);},850); } }
+  else if(d.act==='goto'){ if(!document.body.classList.contains('co')) ouvrirCarnet(d.mode||'sortie'); goTo(d.i||0); }
+}catch(err){}});
+render(cur); maj();
+</script>
+</body>
+</html>
