@@ -2,113 +2,317 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sorties Péi — visite guidée</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Sorties Péi</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Patrick+Hand&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  :root{ --jaune:#F5C518; --hand:'Caveat','Segoe Script',cursive; }
-  *{box-sizing:border-box;margin:0;padding:0}
-  body{font-family:'Poppins',system-ui,sans-serif;color:#eaf0fb;min-height:100vh;
-    background:radial-gradient(circle at 25% 0%, #24407f 0%, #14245a 45%, #0a1330 100%);
-    padding:30px 18px 50px}
-  .head{text-align:center;margin-bottom:26px}
-  .head .eyebrow{font-size:12.5px;letter-spacing:2px;color:#9db4e8;font-weight:600}
-  .head h1{font-family:var(--hand);font-size:46px;line-height:.9;margin-top:4px}
-  .head h1 .y{color:var(--jaune)}
-  .head p{font-size:14px;color:#aebbd8;margin-top:8px}
-
-  .stage{display:flex;gap:42px;align-items:center;justify-content:center;max-width:1000px;margin:0 auto;flex-wrap:wrap}
-
-  /* Téléphone */
-  .phone{width:340px;height:710px;background:#070b16;border-radius:44px;padding:12px;flex-shrink:0;
-    box-shadow:0 36px 80px rgba(0,0,0,.55), inset 0 0 0 2px rgba(255,255,255,.06)}
-  .phone .notch{position:absolute;width:118px;height:24px;background:#070b16;border-radius:0 0 16px 16px;left:50%;transform:translateX(-50%);margin-top:0;z-index:3}
-  .phone .screen{width:100%;height:100%;border-radius:33px;overflow:hidden;background:#0e1626;position:relative}
-  .phone iframe{width:100%;height:100%;border:none;display:block}
-  .phonecol{display:flex;flex-direction:column;align-items:center;gap:14px;flex-shrink:0}
-  .fullbtn{background:var(--jaune);color:#1a2440;font-weight:700;border:none;padding:11px 22px;border-radius:12px;cursor:pointer;font-family:inherit;font-size:14px}
-  .fullbtn:hover{filter:brightness(1.05)}
-
-  /* Panneau guide */
-  .guide{flex:1;min-width:300px;max-width:430px}
-  .guide .g-titre{font-size:13px;text-transform:uppercase;letter-spacing:1px;color:#9db4e8;font-weight:700;margin-bottom:14px}
-  .step{display:flex;gap:13px;align-items:flex-start;border:1px solid rgba(255,255,255,.12);border-radius:15px;padding:13px 15px;margin-bottom:10px;cursor:pointer;transition:.18s;background:rgba(255,255,255,.03)}
-  .step:hover{border-color:rgba(255,255,255,.25)}
-  .step.active{background:rgba(255,255,255,.1);border-color:var(--jaune)}
-  .step .n{flex-shrink:0;width:30px;height:30px;border-radius:9px;background:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px}
-  .step.active .n{background:var(--jaune);color:#1a2440}
-  .step h3{font-size:15px;font-weight:600}
-  .step p{font-size:13px;color:#bcc8e0;margin-top:3px;line-height:1.45}
-  .step .pep{display:inline-block;margin-top:7px;font-size:12px;font-weight:600;color:#1a2440;background:var(--jaune);padding:3px 10px;border-radius:20px}
-  .nav{display:flex;align-items:center;gap:12px;margin-top:16px}
-  .nav button{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;font-weight:600;font-size:14px;padding:10px 18px;border-radius:11px;cursor:pointer;font-family:inherit}
-  .nav button:hover{background:rgba(255,255,255,.2)}
-  .nav #counter{font-size:13px;color:#9db4e8;margin-left:auto}
-  .hint{font-size:12.5px;color:#8fa0c4;margin-top:14px;text-align:center}
-  .hint b{color:#cdd9f3}
-  .end{text-align:center;margin-top:34px}
-  .end .big{font-family:var(--hand);font-size:30px;color:var(--jaune)}
-  @media(max-width:880px){ .stage{flex-direction:column} .phone{width:320px;height:670px} }
+  :root{
+    --bleu:#1B3A8C; --jaune:#F5C518; --rouge:#D9342C; --vert:#2E8B57; --or:#b45309;
+    --papier:#FBF6EA; --encre:#33312a; --gris:#8d8770; --rule:#ece2cd; --marge:#e89f8b; --bord:#e6dcc6;
+    --hand:'Caveat','Segoe Script',cursive; --hand2:'Patrick Hand',cursive;
+    --pepbleu:#E6EDF8; --peprouge:#fdecec;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  body{font-family:'Poppins',system-ui,sans-serif;color:var(--encre);background:#1a2440}
+  .app{position:fixed;inset:0;display:flex;flex-direction:column;background:var(--papier);
+    background-image:repeating-linear-gradient(var(--papier),var(--papier) 33px,var(--rule) 33px,var(--rule) 34px);
+    background-position:0 120px}
+  /* Barre du haut */
+  .top{flex-shrink:0;background:linear-gradient(120deg,#1B3A8C,#12245a);color:#fff;
+    padding:calc(env(safe-area-inset-top) + 14px) 18px 14px;display:flex;align-items:center;justify-content:space-between}
+  .top .brand{display:flex;align-items:center;gap:10px}
+  .top .logo{width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,#2563eb,#f97316);display:flex;align-items:center;justify-content:center;font-size:20px}
+  .top .brand b{font-family:var(--hand);font-size:26px;font-weight:700;line-height:.8}
+  .top .brand .y{color:var(--jaune)}
+  .top .zone{font-size:12px;background:rgba(255,255,255,.16);padding:5px 11px;border-radius:20px;font-weight:600;cursor:pointer}
+  /* Corps : contenu + onglets latéraux */
+  .body{flex:1;display:flex;min-height:0}
+  .content{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:18px 18px 40px 30px;position:relative}
+  .content::before{content:"";position:absolute;top:0;bottom:0;left:18px;width:1.4px;background:var(--marge)}
+  /* Onglets / marque-pages à droite */
+  .tabs{flex-shrink:0;display:flex;flex-direction:column;gap:7px;padding:14px 0 14px 0;justify-content:center}
+  .tab{position:relative;border:none;color:#fff;cursor:pointer;font-weight:700;font-size:11px;text-align:center;width:54px;
+    padding:11px 4px;border-radius:14px 0 0 14px;opacity:.7;transition:.18s;box-shadow:-1px 3px 8px rgba(0,0,0,.18)}
+  .tab .i{font-size:18px;display:block;margin-bottom:3px}
+  .tab.on{opacity:1;width:62px;box-shadow:-2px 5px 12px rgba(0,0,0,.32)}
+  .tab:active{transform:scale(.96)}
+  /* Page */
+  .pg-sec{font-family:var(--hand2);font-size:15px;color:var(--accent,#1B3A8C)}
+  .pg-titre{font-family:var(--hand);font-size:32px;font-weight:700;color:#2b2a23;line-height:1;margin:-2px 0 2px}
+  .pg-sous{font-size:12.5px;color:var(--gris);margin-bottom:14px}
+  .page{animation:fade .22s ease both}
+  @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  /* Composants */
+  .lbl{font-size:12px;font-weight:600;color:var(--gris);margin:14px 0 7px;text-transform:uppercase;letter-spacing:.4px}
+  .opts{display:flex;flex-wrap:wrap;gap:8px}
+  .opt{background:#fff;border:1.5px solid var(--bord);border-radius:11px;padding:9px 13px;font-size:13.5px;font-weight:600;color:#5a5340;cursor:pointer;font-family:inherit}
+  .opt.sel{background:var(--bleu);border-color:var(--bleu);color:#fff}
+  .opt.sel.vert{background:var(--vert);border-color:var(--vert)}
+  .stepper{display:inline-flex;align-items:center;gap:14px;background:#fff;border:1.5px solid var(--bord);border-radius:11px;padding:6px 14px}
+  .stepper button{width:28px;height:28px;border-radius:8px;border:none;background:#f1e7d4;font-size:18px;cursor:pointer;color:#5a5340}
+  .stepper b{font-size:16px;min-width:20px;text-align:center}
+  .cta{display:block;width:100%;margin-top:22px;background:var(--bleu);color:#fff;border:none;font-weight:700;font-size:16px;padding:15px;border-radius:14px;cursor:pointer;font-family:inherit;box-shadow:0 8px 18px rgba(27,58,140,.3)}
+  .cta:active{transform:scale(.99)}
+  .cta.vert{background:var(--vert);box-shadow:0 8px 18px rgba(46,139,87,.3)}
+  /* Journée (moments) */
+  .moment{display:flex;gap:12px;padding:12px 0;border-bottom:1px dashed var(--bord)}
+  .moment:last-child{border-bottom:none}
+  .moment .h{flex-shrink:0;width:64px;font-family:var(--hand2);font-size:15px;color:var(--gris);cursor:pointer;background:none;border:none;text-align:left;padding-top:2px}
+  .moment.off{opacity:.5} .moment.off .h{text-decoration:line-through}
+  .moment .ct{font-weight:700;font-size:14.5px;color:#2b2a23}
+  .moment .cs{font-size:12.5px;color:var(--gris);margin-top:1px}
+  .tagfree{display:inline-block;font-size:10.5px;font-weight:700;background:#E1F5EE;color:#04342C;padding:2px 8px;border-radius:6px;margin-top:6px}
+  .tagpep{display:inline-flex;align-items:center;gap:7px;flex-wrap:wrap;margin-top:7px}
+  .tagpep .nm{font-size:11px;font-weight:700;background:var(--peprouge);color:#a32d2d;padding:3px 9px;border-radius:7px}
+  .tagpep .rb{font-size:11px;font-weight:700;background:var(--rouge);color:#fff;padding:4px 10px;border-radius:7px;border:none;cursor:pointer}
+  .reroll{flex-shrink:0;align-self:flex-start;width:30px;height:30px;border-radius:50%;background:#f3ead6;border:1px solid var(--bord);color:#6a6450;font-size:15px;cursor:pointer;margin-top:14px}
+  .reroll:active{transform:rotate(180deg)}
+  .heart{background:none;border:none;cursor:pointer;font-size:16px;margin-left:6px;opacity:.5}
+  .heart.on{opacity:1}
+  .budget-rec{margin-top:14px;font-family:var(--hand);font-size:20px;color:var(--bleu)}
+  /* Checklist */
+  .crow{display:flex;align-items:center;gap:11px;background:#fff;border:1px solid var(--bord);border-radius:11px;padding:11px 13px;margin-bottom:8px;cursor:pointer;font-size:14.5px}
+  .crow.ok{background:#f0fdf4;border-color:#bbf7d0;color:var(--gris)}
+  .cbox{width:22px;height:22px;border:2px solid #b9ad90;border-radius:6px;flex-shrink:0;position:relative}
+  .crow.ok .cbox{border-color:var(--vert)} .crow.ok .cbox::after{content:"✓";position:absolute;inset:-5px 0 0 2px;font-family:var(--hand);font-size:24px;color:var(--vert)}
+  .crow .lab{flex:1} .crow.ok .lab{text-decoration:line-through}
+  .crow .del{background:none;border:none;color:#c0b69a;font-size:15px;cursor:pointer}
+  .addrow{display:flex;gap:8px;margin-top:12px}
+  .addrow input{flex:1;padding:11px 13px;border:1.5px solid var(--bord);border-radius:11px;font-size:14px;font-family:inherit;background:#fff}
+  .addrow button{background:var(--vert);color:#fff;border:none;font-weight:700;padding:0 16px;border-radius:11px;cursor:pointer;font-family:inherit}
+  /* cartes partenaires / docrow */
+  .pcard{background:#fff;border:1px solid var(--bord);border-radius:13px;padding:13px 15px;margin-bottom:10px}
+  .pcard .pt{font-weight:700;font-size:15px;color:#2b2a23}
+  .pcard .pd{font-size:12.5px;color:var(--gris);margin-top:2px}
+  .pcard .pa{display:flex;gap:8px;margin-top:10px}
+  .pcard .pa a,.pcard .pa button{font-size:12.5px;font-weight:700;border-radius:9px;padding:8px 13px;cursor:pointer;border:none;text-decoration:none;font-family:inherit}
+  .b-resa{background:var(--rouge);color:#fff} .b-site{background:#fff;border:1.5px solid var(--bord);color:#5a5340}
+  .biglink{display:block;text-align:center;background:var(--jaune);color:#3a2e00;font-weight:700;text-decoration:none;padding:14px;border-radius:13px;margin-top:14px;font-size:14.5px}
+  /* polaroids / souvenirs */
+  .gal{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:12px;margin-top:6px}
+  .pola{background:#fff;padding:7px 7px 26px;border-radius:3px;box-shadow:0 6px 14px rgba(0,0,0,.14);transform:rotate(-2deg);position:relative}
+  .pola:nth-child(even){transform:rotate(2deg)}
+  .pola img{width:100%;height:100px;object-fit:cover;border-radius:2px;display:block;background:#dbeafe}
+  .pola video{width:100%;height:100px;object-fit:cover;border-radius:2px;display:block;background:#000}
+  .pola .cp{position:absolute;left:0;right:0;bottom:4px;text-align:center;font-family:var(--hand);font-size:16px;color:#4a463a}
+  .addphoto{border:2px dashed var(--bord);border-radius:12px;padding:20px;text-align:center;color:var(--gris);font-size:13.5px;cursor:pointer;background:#fff;margin-top:6px}
+  .consent{display:flex;gap:11px;align-items:flex-start;background:#fffbe9;border:1px solid #f5e3a8;border-radius:12px;padding:13px 15px;margin-top:14px;cursor:pointer;font-size:13px;color:#6a5510}
+  .consent .cbox{width:22px;height:22px;border-color:#caa53a}
+  .consent.ok .cbox{border-color:var(--vert)} .consent.ok .cbox::after{content:"✓";position:absolute;inset:-5px 0 0 2px;font-family:var(--hand);font-size:24px;color:var(--vert)}
+  .consent .cbox{position:relative}
+  .note{font-family:var(--hand);font-size:20px;color:#5a5340;margin:8px 0}
+  .postit{background:#fff7b0;padding:13px 15px;font-family:var(--hand);font-size:19px;color:#4a463a;line-height:1.2;box-shadow:0 6px 14px rgba(0,0,0,.12);transform:rotate(-1deg);border-radius:2px;margin-top:12px}
+  .empty{color:var(--gris);font-size:13.5px;text-align:center;padding:24px 0;font-family:var(--hand2)}
+  @media(min-width:780px){ .app{max-width:480px;margin:0 auto;left:0;right:0;border-radius:0} }
 </style>
 </head>
 <body>
-  <div class="head">
-    <div class="eyebrow">PIX-I-ART × PÉPITE PAYS</div>
-    <h1>Sorties <span class="y">Péi</span> — la visite guidée</h1>
-    <p>Suis les étapes (le téléphone bouge tout seul), ou clique directement dans l'écran.</p>
+<div class="app">
+  <div class="top">
+    <div class="brand"><div class="logo">🌴</div><b>Sorties <span class="y">Péi</span></b></div>
+    <div class="zone" id="zoneLbl" onclick="nav('sortir')">Est ▾</div>
   </div>
-
-  <div class="stage">
-    <div class="phonecol">
-      <div class="phone"><div class="notch"></div><div class="screen"><iframe id="appframe" src="app.html" title="Démo Sorties Péi"></iframe></div></div>
-      <button class="fullbtn" id="full">⤢ Voir en plein écran</button>
-    </div>
-
-    <div class="guide">
-      <div class="g-titre">La démo, expliquée pour toi, Ludo 👋</div>
-      <div id="steps"></div>
-      <div class="nav">
-        <button id="prev">‹ Précédent</button>
-        <button id="next">Suivant ›</button>
-        <span id="counter"></span>
-      </div>
-      <div class="hint">👆 Tu peux aussi <b>cliquer directement dans le téléphone</b> — c'est la vraie démo.</div>
-    </div>
+  <div class="body">
+    <div class="content" id="content"></div>
+    <div class="tabs" id="tabs"></div>
   </div>
-
-  <div class="end"><div class="big">Nou en parle ? 🌴</div></div>
+</div>
 
 <script>
-const STEPS=[
- {t:"La couverture, 2 portes", d:"Un seul carnet, deux usages : « Voyage à l'extérieur » (le Réunionnais qui part) et « Sortie péi » (sortir sur l'île). Et c'est bâti sur Pix-Trip, déjà existant.", pep:"Deux publics, une seule app", msg:{act:'cover'}},
- {t:"Compose ta journée", d:"Le Réunionnais dit son envie ; l'app lui propose une journée matin · midi · aprem · soir. Pas un annuaire : un programme prêt-à-vivre.", pep:"On vend une décision, pas un catalogue", msg:{act:'open',mode:'sortie',i:1}},
- {t:"Le moment Pépite = ton revenu", d:"Les idées sont gratuites (ça crée la confiance). Mais au bon moment — le déjeuner, l'activité — un partenaire Pépite s'invite avec son bon plan.", pep:"C'est LÀ que tu gagnes : leads & commissions", msg:{act:'goto',i:1}},
- {t:"↻ jusqu'à ce que ça plaise", d:"Pas convaincu ? Il clique ↻ et l'app propose autre chose, jusqu'à trouver. Il garde la main, sans jamais subir de pub.", pep:"Adhésion = usage tous les week-ends", msg:{act:'goto',i:1}},
- {t:"Tes partenaires, réservables", d:"Chaque envie route vers ton réseau Pépite, regroupé et réservable. Et la checklist péi est déjà prête.", pep:"Chaque sortie nourrit ton réseau", msg:{act:'goto',i:3}}
+/* ===== Données ===== */
+const SECTIONS=[
+ {k:'sortir', i:'🔎', t:'Sortir', acc:'#1B3A8C'},
+ {k:'journee', i:'📅', t:'Journée', acc:'#1B3A8C'},
+ {k:'checklist', i:'✅', t:'Check', acc:'#2E8B57'},
+ {k:'pepite', i:'🎟️', t:'Pépite', acc:'#D9342C'},
+ {k:'souvenirs', i:'📸', t:'Souv.', acc:'#b45309'},
+ {k:'favoris', i:'❤️', t:'Favoris', acc:'#0d9488'},
+ {k:'invites', i:'✈️', t:'Invités', acc:'#7c3aed'}
+];
+const TABCOL={sortir:'#1B3A8C',journee:'#2563eb',checklist:'#2E8B57',pepite:'#D9342C',souvenirs:'#b45309',favoris:'#0d9488',invites:'#7c3aed'};
+
+const PEPITE_URL='https://pepitepays.vercel.app';
+
+/* Pools de lieux par zone (Est riche ; autres = base + à enrichir) */
+const POOL={
+ E:{
+  matin:[{t:"Bassin La Paix — Ste-Suzanne",d:"baignade rivière en famille"},{t:"Grand Étang — Saint-Benoît",d:"balade autour de l'étang"},{t:"Marché forain de Saint-André",d:"l'ambiance péi du matin"},{t:"Canyoning à Sainte-Suzanne",d:"sensations en rivière",pep:"Run Évasion · dès 45 €/pers"}],
+  midi:[{t:"Pique-nique au kiosque",d:"kart kabri sorti du coffre"},{t:"Ti-resto « Chez Mémé »",d:"cari camaron, les pieds dans le vert",pep:"Partenaire Pépite · −10%"},{t:"Camion-bar de Bras-Panon",d:"bouchons & sandwichs péi",pep:"Partenaire Pépite"},{t:"Table d'hôte — Salazie",d:"chouchou farci maison",pep:"Partenaire Pépite · sur résa"}],
+  aprem:[{t:"Anse des Cascades — Ste-Rose",d:"balade + kiosques sous cocotiers"},{t:"Vanilleraie de Bois-Blanc",d:"visite guidée parfumée",pep:"Partenaire Pépite · −15%"},{t:"Cascade Niagara — Ste-Suzanne",d:"baignade selon le débit"},{t:"Takamaka — point de vue",d:"les gorges vertigineuses"}],
+  soir:[{t:"Coucher de soleil à Takamaka",d:"point de vue sur les gorges"},{t:"Apéro bord de mer — Ste-Rose",d:"snack péi face à l'océan",pep:"Partenaire Pépite"},{t:"Retour tranquille",d:"on rentre se reposer"}]
+ },
+ O:{ matin:[{t:"Lagon de l'Ermitage",d:"baignade surveillée, tôt le matin"}], midi:[{t:"Snack du lagon",d:"bonbon piment",pep:"Partenaire Pépite · −10%"}], aprem:[{t:"Kélonia — St-Leu",d:"les tortues"}], soir:[{t:"Coucher de soleil au Cap La Houssaye",d:"face à l'océan"}] },
+ N:{ matin:[{t:"Jardin de l'État — St-Denis",d:"ombragé, familial"}], midi:[{t:"Le Barachois",d:"front de mer"}], aprem:[{t:"La Roche Écrite (départ)",d:"balade fraîche"}], soir:[{t:"Marché de nuit",d:"ambiance péi"}] },
+ S:{ matin:[{t:"Grand Anse — St-Joseph",d:"plage + bassin surveillé"}], midi:[{t:"Resto créole — Entre-Deux",d:"cari péi",pep:"Partenaire Pépite"}], aprem:[{t:"Cap Méchant — St-Philippe",d:"coulées de lave"}], soir:[{t:"Coucher de soleil Sud sauvage",d:"spectaculaire"}] }
+};
+const PARTNERS=[
+ {ic:'🍛',t:"Ti-resto « Chez Mémé »",d:"cari camaron · −10% le midi"},
+ {ic:'🛶',t:"Run Évasion — canyoning",d:"demi-journée dès 45 €/pers"},
+ {ic:'🌿',t:"Vanilleraie de Bois-Blanc",d:"visite guidée · −15% avec Pépite"},
+ {ic:'🏡',t:"Ti'kaz « La Varangue »",d:"gîte dès 80 €/nuit + table d'hôte"},
+ {ic:'🍢',t:"Camion-bar de Bras-Panon",d:"bouchons & samoussas, sur la route"}
 ];
 
-const frame=document.getElementById('appframe');
-let cur=0;
-function send(m){ try{ frame.contentWindow.postMessage(m,'*'); }catch(e){} }
-function go(i){
-  cur=Math.max(0,Math.min(STEPS.length-1,i));
-  [...document.querySelectorAll('.step')].forEach((el,k)=>el.classList.toggle('active',k===cur));
-  document.getElementById('counter').textContent=(cur+1)+' / '+STEPS.length;
-  send(STEPS[cur].msg);
+/* ===== État ===== */
+let demande={zone:'E',duree:'journee',type:'pique-nique',pers:4,budget:'raisonnab'};
+const JM={matin:'Matin',midi:'Midi',aprem:'Aprem',soir:'Soir'};
+let jour=null;                 // {matin:{i,on},...}
+let checklist=[{l:"Glacière + pique-nique",ok:true},{l:"Anti-moustiques (l'Est i pik)",ok:true},{l:"K-way — l'Est i pleut vite",ok:false},{l:"Savates d'eau pour le bassin",ok:false},{l:"Sac poubelle — nou lès rien",ok:false}];
+let favoris=[];
+let souvenirs=[];              // {url,type,cap}
+let consent=false;
+let active='sortir';
+
+/* ===== Génération journée ===== */
+function momentsForDuree(){ return demande.duree==='demi' ? ['matin','midi'] : ['matin','midi','aprem','soir']; }
+function genJour(){
+  jour={};
+  const pool=POOL[demande.zone]||POOL.E;
+  momentsForDuree().forEach(m=>{ jour[m]={i:0,on:true}; });
+  // budget : combien de partenaires max
+  applyBudget();
 }
-document.getElementById('steps').innerHTML=STEPS.map((s,k)=>
-  `<div class="step" onclick="go(${k})"><div class="n">${k+1}</div><div><h3>${s.t}</h3><p>${s.d}</p><span class="pep">💡 ${s.pep}</span></div></div>`).join('');
-document.getElementById('next').onclick=()=>go(cur+1);
-document.getElementById('prev').onclick=()=>go(cur-1);
-frame.addEventListener('load',()=>setTimeout(()=>go(0),300));
-document.getElementById('full').onclick=function(){
-  var s=document.querySelector('.phone .screen');
-  if(s.requestFullscreen){ s.requestFullscreen().catch(function(){window.open('app.html','_blank');}); }
-  else if(s.webkitRequestFullscreen){ s.webkitRequestFullscreen(); }
-  else { window.open('app.html','_blank'); }
-};
+function applyBudget(){
+  // gratuit = pas de partenaire ; raisonnab = 1 ; plaisir = 2
+  const max = demande.budget==='gratuit'?0:(demande.budget==='plaisir'?2:1);
+  const pool=POOL[demande.zone]||POOL.E;
+  let used=0;
+  Object.keys(jour).forEach(m=>{
+    const alts=pool[m]||[]; const cur=alts[jour[m].i%alts.length]||{};
+    if(cur.pep) used++;
+  });
+  // si trop de partenaires pour le budget, on bascule les surplus sur une option gratuite
+  if(used>max){
+    Object.keys(jour).forEach(m=>{
+      if(used<=max) return;
+      const alts=pool[m]||[]; const cur=alts[jour[m].i%alts.length]||{};
+      if(cur.pep){ const free=alts.findIndex(a=>!a.pep); if(free>=0){ jour[m].i=free; used--; } }
+    });
+  }
+}
+
+/* ===== Navigation ===== */
+function nav(k){ active=k; renderTabs(); render(); document.getElementById('content').scrollTop=0; }
+function renderTabs(){
+  document.getElementById('tabs').innerHTML=SECTIONS.map(s=>
+    `<button class="tab ${s.k===active?'on':''}" style="background:${TABCOL[s.k]}" onclick="nav('${s.k}')"><span class="i">${s.i}</span>${s.t}</button>`).join('');
+}
+function head(sec,titre,sous,acc){ return `<div style="--accent:${acc}"><div class="pg-sec">${sec}</div><div class="pg-titre">${titre}</div><div class="pg-sous">${sous||''}</div></div>`; }
+
+function render(){
+  const c=document.getElementById('content');
+  document.getElementById('zoneLbl').textContent={E:'Est',O:'Ouest',N:'Nord',S:'Sud'}[demande.zone]+' ▾';
+  if(active==='sortir') c.innerHTML=viewSortir();
+  else if(active==='journee'){ if(!jour) genJour(); c.innerHTML='<div class="page">'+head('Le programme','Ta journée',{E:'dans l\'Est',O:'dans l\'Ouest',N:'dans le Nord',S:'dans le Sud'}[demande.zone],'#1B3A8C')+'<div id="jr"></div></div>'; renderJour(); }
+  else if(active==='checklist') renderChecklist();
+  else if(active==='pepite') c.innerHTML=viewPepite();
+  else if(active==='souvenirs') renderSouvenirs();
+  else if(active==='favoris') renderFavoris();
+  else if(active==='invites') c.innerHTML=viewInvites();
+}
+
+/* --- Sortir (questionnaire) --- */
+function chip(val,cur,key,extra){ return `<button class="opt ${cur===val?'sel '+(extra||''):''}" onclick="setD('${key}','${val}')">${val}</button>`; }
+function viewSortir(){
+  const z={E:'Est',O:'Ouest',N:'Nord',S:'Sud'};
+  return '<div class="page">'+head('Kosa nou fé ?','Compose ta sortie','Dis-nous, on te propose une journée','#1B3A8C')+`
+    <div class="lbl">Quelle zone ?</div><div class="opts">${Object.keys(z).map(k=>`<button class="opt ${demande.zone===k?'sel':''}" onclick="setD('zone','${k}')">${z[k]}</button>`).join('')}</div>
+    <div class="lbl">Combien de temps ?</div><div class="opts">${chip('demi',demande.duree,'duree')} ${chip('journee',demande.duree,'duree').replace('journee','journée')}</div>
+    <div class="lbl">Envie de…</div><div class="opts">${['pique-nique','plage','rivière & cascade','rando','point de vue','bon manzer'].map(v=>`<button class="opt ${demande.type===v?'sel':''}" onclick="setD('type','${v}')">${v}</button>`).join('')}</div>
+    <div class="lbl">Combien de personnes ?</div><div class="stepper"><button onclick="stepPers(-1)">−</button><b id="persN">${demande.pers}</b><button onclick="stepPers(1)">+</button></div>
+    <div class="lbl">Le budget ?</div><div class="opts">${['gratuit','raisonnab','plaisir'].map(v=>`<button class="opt ${demande.budget===v?'sel vert':''}" onclick="setD('budget','${v}')">${v}</button>`).join('')}</div>
+    <button class="cta vert" onclick="genJour();nav('journee')">✨ Trouve-moi ma journée</button>
+  </div>`;
+}
+function setD(k,v){ demande[k]=v; jour=null; if(active==='sortir') render(); }
+function stepPers(n){ demande.pers=Math.max(1,Math.min(12,demande.pers+n)); document.getElementById('persN').textContent=demande.pers; }
+
+/* --- Journée --- */
+function renderJour(){
+  const el=document.getElementById('jr'); if(!el) return;
+  const pool=POOL[demande.zone]||POOL.E; let free=0,pep=0,h='';
+  momentsForDuree().forEach(m=>{
+    const s=jour[m], alts=pool[m]||[{t:'—',d:''}], a=alts[s.i%alts.length];
+    if(s.on){ a.pep?pep++:free++; }
+    const favKey=a.t; const isFav=favoris.indexOf(favKey)>=0;
+    h+=`<div class="moment ${s.on?'':'off'}"><button class="h" onclick="togM('${m}')">${JM[m]}</button><div style="flex:1;min-width:0">`;
+    if(s.on){
+      h+=`<div class="ct">${a.t} <button class="heart ${isFav?'on':''}" onclick="event.stopPropagation();toggleFav('${favKey.replace(/'/g,"\\'")}')">❤</button></div><div class="cs">${a.d}</div>`;
+      h+= a.pep ? `<div class="tagpep"><span class="nm">🎟️ ${a.pep}</span><button class="rb" onclick="resa()">Réserver ›</button></div>` : `<span class="tagfree">Gratuit</span>`;
+    } else h+=`<div class="cs" style="padding:4px 0">— moment libre —</div>`;
+    h+=`</div>`;
+    if(s.on) h+=`<button class="reroll" onclick="reroll('${m}')" title="Une autre idée">↻</button>`;
+    h+=`</div>`;
+  });
+  const cout = pep* (demande.budget==='plaisir'?40:18);
+  h+=`<div class="budget-rec">≈ ${cout} €/pers · ${free} gratuit${free>1?'s':''} + ${pep} partenaire${pep>1?'s':''}</div>`;
+  h+=`<div class="note" style="font-size:15px;color:var(--gris)">Clique un moment pour l'enlever · ↻ pour une autre idée · ❤ pour garder un spot</div>`;
+  el.innerHTML=h;
+}
+function reroll(m){ jour[m].i++; renderJour(); }
+function togM(m){ jour[m].on=!jour[m].on; renderJour(); }
+function resa(){ window.open(PEPITE_URL,'_blank'); }
+
+/* --- Checklist --- */
+function renderChecklist(){
+  const c=document.getElementById('content');
+  let h='<div class="page">'+head('À ne pas oublier','Ma checklist','coche, ajoute, enlève','#2E8B57');
+  h+=checklist.map((x,i)=>`<div class="crow ${x.ok?'ok':''}" onclick="togCheck(${i})"><span class="cbox"></span><span class="lab">${x.l}</span><button class="del" onclick="event.stopPropagation();delCheck(${i})">✕</button></div>`).join('');
+  h+=`<div class="addrow"><input id="newcheck" placeholder="Ajouter… (ex : maillot, serviette)" onkeydown="if(event.key==='Enter')addCheck()"><button onclick="addCheck()">+ Ajouter</button></div></div>`;
+  c.innerHTML=h;
+}
+function togCheck(i){ checklist[i].ok=!checklist[i].ok; renderChecklist(); }
+function delCheck(i){ checklist.splice(i,1); renderChecklist(); }
+function addCheck(){ const v=document.getElementById('newcheck').value.trim(); if(v){ checklist.push({l:v,ok:false}); renderChecklist(); } }
+
+/* --- Pépite --- */
+function viewPepite(){
+  let h='<div class="page">'+head('Les bons plans','Espace Pépite','tes partenaires, réservables','#D9342C');
+  h+=PARTNERS.map(p=>`<div class="pcard"><div class="pt">${p.ic} ${p.t}</div><div class="pd">${p.d}</div><div class="pa"><button class="b-resa" onclick="resa()">Réserver</button><a class="b-site" href="${PEPITE_URL}" target="_blank" rel="noopener">Voir sur Pépite</a></div></div>`).join('');
+  h+=`<a class="biglink" href="${PEPITE_URL}" target="_blank" rel="noopener">🎟️ Acheter mes tickets sur Pépite Pays</a></div>`;
+  return h;
+}
+
+/* --- Souvenirs --- */
+function renderSouvenirs(){
+  const c=document.getElementById('content');
+  let h='<div class="page">'+head('Au retour','Tes souvenirs','ajoute tes photos & vidéos','#b45309');
+  h+=`<label class="addphoto">📷 Ajouter une photo ou une vidéo<input type="file" accept="image/*,video/*" style="display:none" onchange="addMedia(event)"></label>`;
+  if(souvenirs.length){
+    h+='<div class="gal">'+souvenirs.map((s,i)=>`<div class="pola">${s.type==='video'?`<video src="${s.url}" muted playsinline></video>`:`<img src="${s.url}">`}<div class="cp">souvenir ${i+1}</div></div>`).join('')+'</div>';
+  } else h+=`<div class="empty">Pas encore d'images — ta sortie finie, ajoute-les ici 📸</div>`;
+  h+=`<div class="consent ${consent?'ok':''}" onclick="togConsent()"><span class="cbox"></span><div>✅ J'autorise <b>Pixie</b> à utiliser mes photos/vidéos pour la communication (site, réseaux). En échange : mes souvenirs montés gratuitement.</div></div>`;
+  h+=`<div class="note">Ces images nourrissent ta vidéo souvenir + la com Pixie / Air Austral.</div></div>`;
+  c.innerHTML=h;
+}
+function addMedia(e){ const f=e.target.files[0]; if(!f) return; const url=URL.createObjectURL(f); souvenirs.push({url,type:f.type.indexOf('video')===0?'video':'img'}); renderSouvenirs(); }
+function togConsent(){ consent=!consent; renderSouvenirs(); }
+
+/* --- Favoris --- */
+function toggleFav(t){ const i=favoris.indexOf(t); if(i>=0)favoris.splice(i,1); else favoris.push(t); if(active==='journee')renderJour(); if(active==='favoris')renderFavoris(); }
+function renderFavoris(){
+  const c=document.getElementById('content');
+  let h='<div class="page">'+head('Mes endroits gardés','Mes favoris','tes spots préférés','#0d9488');
+  if(favoris.length) h+=favoris.map(t=>`<div class="pcard"><div class="pt">❤ ${t}</div><div class="pa"><button class="b-resa" onclick="toggleFav('${t.replace(/'/g,"\\'")}');" style="background:#0d9488">Retirer</button></div></div>`).join('');
+  else h+=`<div class="empty">Garde tes coups de cœur avec le ❤ dans « Journée »</div>`;
+  c.innerHTML=h+'</div>';
+}
+
+/* --- Invités --- */
+function viewInvites(){
+  let h='<div class="page">'+head('Accueil invités','Ils débarquent','le best-of à leur montrer','#7c3aed');
+  h+=`<div class="lbl">Le programme (3 jours)</div>
+    <div class="note">📍 J1 — Lagon de l'Ermitage + coucher de soleil Boucan</div>
+    <div class="note">📍 J2 — Lever de soleil au volcan + Plaine des Sables</div>
+    <div class="note">📍 J3 — Cirque de Cilaos + cari péi chez l'habitant</div>
+    <div class="postit">À leur dire : une laine pour les Hauts · jamais se baigner hors lagon (requin) · le soleil i tape fort 🌞</div>
+    <a class="biglink" href="${PEPITE_URL}" target="_blank" rel="noopener" style="margin-top:18px">Réserver gîtes & activités sur Pépite</a></div>`;
+  return h;
+}
+
+renderTabs(); render();
 </script>
 </body>
 </html>

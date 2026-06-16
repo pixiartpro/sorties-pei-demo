@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sorties Péi — visite guidée</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{ --jaune:#F5C518; --hand:'Caveat','Segoe Script',cursive; }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Poppins',system-ui,sans-serif;color:#eaf0fb;min-height:100vh;
+    background:radial-gradient(circle at 25% 0%, #24407f 0%, #14245a 45%, #0a1330 100%);
+    padding:30px 18px 50px}
+  .head{text-align:center;margin-bottom:26px}
+  .head .eyebrow{font-size:12.5px;letter-spacing:2px;color:#9db4e8;font-weight:600}
+  .head h1{font-family:var(--hand);font-size:46px;line-height:.9;margin-top:4px}
+  .head h1 .y{color:var(--jaune)}
+  .head p{font-size:14px;color:#aebbd8;margin-top:8px}
+
+  .stage{display:flex;gap:42px;align-items:center;justify-content:center;max-width:1000px;margin:0 auto;flex-wrap:wrap}
+
+  /* Téléphone */
+  .phone{width:340px;height:710px;background:#070b16;border-radius:44px;padding:12px;flex-shrink:0;
+    box-shadow:0 36px 80px rgba(0,0,0,.55), inset 0 0 0 2px rgba(255,255,255,.06)}
+  .phone .notch{position:absolute;width:118px;height:24px;background:#070b16;border-radius:0 0 16px 16px;left:50%;transform:translateX(-50%);margin-top:0;z-index:3}
+  .phone .screen{width:100%;height:100%;border-radius:33px;overflow:hidden;background:#0e1626;position:relative}
+  .phone iframe{width:100%;height:100%;border:none;display:block}
+  .phonecol{display:flex;flex-direction:column;align-items:center;gap:14px;flex-shrink:0}
+  .fullbtn{background:var(--jaune);color:#1a2440;font-weight:700;border:none;padding:11px 22px;border-radius:12px;cursor:pointer;font-family:inherit;font-size:14px}
+  .fullbtn:hover{filter:brightness(1.05)}
+
+  /* Panneau guide */
+  .guide{flex:1;min-width:300px;max-width:430px}
+  .guide .g-titre{font-size:13px;text-transform:uppercase;letter-spacing:1px;color:#9db4e8;font-weight:700;margin-bottom:14px}
+  .step{display:flex;gap:13px;align-items:flex-start;border:1px solid rgba(255,255,255,.12);border-radius:15px;padding:13px 15px;margin-bottom:10px;cursor:pointer;transition:.18s;background:rgba(255,255,255,.03)}
+  .step:hover{border-color:rgba(255,255,255,.25)}
+  .step.active{background:rgba(255,255,255,.1);border-color:var(--jaune)}
+  .step .n{flex-shrink:0;width:30px;height:30px;border-radius:9px;background:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px}
+  .step.active .n{background:var(--jaune);color:#1a2440}
+  .step h3{font-size:15px;font-weight:600}
+  .step p{font-size:13px;color:#bcc8e0;margin-top:3px;line-height:1.45}
+  .step .pep{display:inline-block;margin-top:7px;font-size:12px;font-weight:600;color:#1a2440;background:var(--jaune);padding:3px 10px;border-radius:20px}
+  .nav{display:flex;align-items:center;gap:12px;margin-top:16px}
+  .nav button{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;font-weight:600;font-size:14px;padding:10px 18px;border-radius:11px;cursor:pointer;font-family:inherit}
+  .nav button:hover{background:rgba(255,255,255,.2)}
+  .nav #counter{font-size:13px;color:#9db4e8;margin-left:auto}
+  .hint{font-size:12.5px;color:#8fa0c4;margin-top:14px;text-align:center}
+  .hint b{color:#cdd9f3}
+  .end{text-align:center;margin-top:34px}
+  .end .big{font-family:var(--hand);font-size:30px;color:var(--jaune)}
+  @media(max-width:880px){ .stage{flex-direction:column} .phone{width:320px;height:670px} }
+</style>
+</head>
+<body>
+  <div class="head">
+    <div class="eyebrow">PIX-I-ART × PÉPITE PAYS</div>
+    <h1>Sorties <span class="y">Péi</span> — la visite guidée</h1>
+    <p>Suis les étapes (le téléphone bouge tout seul), ou clique directement dans l'écran.</p>
+  </div>
+
+  <div class="stage">
+    <div class="phonecol">
+      <div class="phone"><div class="notch"></div><div class="screen"><iframe id="appframe" src="app.html" title="Démo Sorties Péi"></iframe></div></div>
+      <button class="fullbtn" id="full">⤢ Voir en plein écran</button>
+    </div>
+
+    <div class="guide">
+      <div class="g-titre">La démo, expliquée pour toi, Ludo 👋</div>
+      <div id="steps"></div>
+      <div class="nav">
+        <button id="prev">‹ Précédent</button>
+        <button id="next">Suivant ›</button>
+        <span id="counter"></span>
+      </div>
+      <div class="hint">👆 Tu peux aussi <b>cliquer directement dans le téléphone</b> — c'est la vraie démo.</div>
+    </div>
+  </div>
+
+  <div class="end"><div class="big">Nou en parle ? 🌴</div></div>
+
+<script>
+const STEPS=[
+ {t:"La couverture, 2 portes", d:"Un seul carnet, deux usages : « Voyage à l'extérieur » (le Réunionnais qui part) et « Sortie péi » (sortir sur l'île). Et c'est bâti sur Pix-Trip, déjà existant.", pep:"Deux publics, une seule app", msg:{act:'cover'}},
+ {t:"Compose ta journée", d:"Le Réunionnais dit son envie ; l'app lui propose une journée matin · midi · aprem · soir. Pas un annuaire : un programme prêt-à-vivre.", pep:"On vend une décision, pas un catalogue", msg:{act:'open',mode:'sortie',i:1}},
+ {t:"Le moment Pépite = ton revenu", d:"Les idées sont gratuites (ça crée la confiance). Mais au bon moment — le déjeuner, l'activité — un partenaire Pépite s'invite avec son bon plan.", pep:"C'est LÀ que tu gagnes : leads & commissions", msg:{act:'goto',i:1}},
+ {t:"↻ jusqu'à ce que ça plaise", d:"Pas convaincu ? Il clique ↻ et l'app propose autre chose, jusqu'à trouver. Il garde la main, sans jamais subir de pub.", pep:"Adhésion = usage tous les week-ends", msg:{act:'goto',i:1}},
+ {t:"Tes partenaires, réservables", d:"Chaque envie route vers ton réseau Pépite, regroupé et réservable. Et la checklist péi est déjà prête.", pep:"Chaque sortie nourrit ton réseau", msg:{act:'goto',i:3}}
+];
+
+const frame=document.getElementById('appframe');
+let cur=0;
+function send(m){ try{ frame.contentWindow.postMessage(m,'*'); }catch(e){} }
+function go(i){
+  cur=Math.max(0,Math.min(STEPS.length-1,i));
+  [...document.querySelectorAll('.step')].forEach((el,k)=>el.classList.toggle('active',k===cur));
+  document.getElementById('counter').textContent=(cur+1)+' / '+STEPS.length;
+  send(STEPS[cur].msg);
+}
+document.getElementById('steps').innerHTML=STEPS.map((s,k)=>
+  `<div class="step" onclick="go(${k})"><div class="n">${k+1}</div><div><h3>${s.t}</h3><p>${s.d}</p><span class="pep">💡 ${s.pep}</span></div></div>`).join('');
+document.getElementById('next').onclick=()=>go(cur+1);
+document.getElementById('prev').onclick=()=>go(cur-1);
+frame.addEventListener('load',()=>setTimeout(()=>go(0),300));
+document.getElementById('full').onclick=function(){
+  var s=document.querySelector('.phone .screen');
+  if(s.requestFullscreen){ s.requestFullscreen().catch(function(){window.open('app.html','_blank');}); }
+  else if(s.webkitRequestFullscreen){ s.webkitRequestFullscreen(); }
+  else { window.open('app.html','_blank'); }
+};
+</script>
+</body>
+</html>
