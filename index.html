@@ -79,6 +79,11 @@
   .tag-free{display:inline-block;font-size:10.5px;font-weight:700;background:#E1F5EE;color:#04342C;padding:2px 8px;border-radius:6px;margin-top:6px}
   .tag-pep{display:inline-flex;align-items:center;font-size:10.5px;font-weight:700;background:#fdecec;color:#a32d2d;padding:3px 4px 3px 9px;border-radius:7px;margin-top:6px}
   .tag-pep .rb{background:#D9342C;color:#fff;padding:3px 8px;border-radius:6px;margin-left:6px}
+  .moment .hbtn{background:none;border:none;cursor:pointer;text-align:left;padding:1px 0 0}
+  .moment.off{opacity:.5}
+  .moment.off .hbtn{text-decoration:line-through}
+  .reroll{flex-shrink:0;align-self:center;width:30px;height:30px;border-radius:50%;background:#f3ead6;border:1px solid #e6dcc6;color:#6a6450;font-size:15px;cursor:pointer;transition:.12s}
+  .reroll:hover{background:#e9dcc0;transform:rotate(90deg)}
 
   /* Visibilité avant / après ouverture */
   #book .bookmarks{opacity:0;transform:translateX(-26px);pointer-events:none;transition:opacity .5s .3s,transform .5s .3s}
@@ -297,14 +302,8 @@ const PAGES_SORTIE=[
      <span class="jgrp">Est</span><span class="jgrp">journée</span><span class="jgrp">rivière &amp; cascade</span><span class="jgrp">2 marmailles</span><span class="jgrp">ti budget</span>
    </div>
    <div class="postit" style="margin-top:14px">Glisse → ta journée : des idées gratuites + un bon plan Pépite →</div>`},
- {sec:"Le programme", accent:"#1B3A8C", stamp:"Est", titre:"Ta journée dans l'Est", num:"",
-  body:`<div class="prog">
-     <div class="moment"><div class="h">Matin</div><div style="flex:1;min-width:0"><div class="ct">Bassin La Paix — Ste-Suzanne</div><div class="cs">baignade rivière en famille</div><span class="tag-free">Gratuit</span></div></div>
-     <div class="moment"><div class="h">Midi</div><div style="flex:1;min-width:0"><div class="ct">Ti-resto « Chez Mémé »</div><div class="cs">cari camaron, les pieds dans le vert</div><span class="tag-pep">🍛 Partenaire Pépite · −10%<span class="rb">Réserver ›</span></span></div></div>
-     <div class="moment"><div class="h">Aprem</div><div style="flex:1;min-width:0"><div class="ct">Anse des Cascades — Ste-Rose</div><div class="cs">balade + kiosques sous cocotiers</div><span class="tag-free">Gratuit</span></div></div>
-     <div class="moment"><div class="h">Soir</div><div style="flex:1;min-width:0"><div class="ct">Coucher de soleil à Takamaka <span style="font-weight:400;color:#9a9079">(option)</span></div><div class="cs">point de vue sur les gorges</div><span class="tag-free">Gratuit</span></div></div>
-   </div>
-   <div class="postit" style="margin-top:12px">≈ 25 €/pers · 3 idées gratuites + 1 partenaire · raccourcis en demi-journée, ou ajoute le soir</div>`},
+ {sec:"Le programme", accent:"#1B3A8C", stamp:"Est", titre:"Ta journée dans l'Est", num:"", journee:true,
+  body:`<div class="note" style="margin-bottom:6px">Compose ta journée 🌿</div><div id="journee"></div>`},
  {sec:"Ma checklist", accent:"#BA7517", stamp:"Kart kabri", titre:"À prévoir", num:"",
   body:`<div class="checkrow ok"><span class="cbox"></span>Glacière + pique-nique</div>
    <div class="checkrow ok"><span class="cbox"></span>Anti-moustiques — l'Est i pik</div>
@@ -340,7 +339,55 @@ function render(i){
   page.innerHTML=`<div class="pg-sec">${p.sec}</div><div class="pg-titre">${p.titre}</div>
     <div class="pg-sous">${p.sous||''}</div><div class="stamp">${p.stamp}</div>
     <div class="pg-body">${p.body}</div><div class="pg-num">~ ${i+1} ~</div>`;
+  if(p.journee){ try{renderJournee();}catch(e){} }
 }
+const JMOMENTS={
+ matin:[
+  {t:"Bassin La Paix — Ste-Suzanne",d:"baignade rivière en famille"},
+  {t:"Grand Étang — Saint-Benoît",d:"balade autour de l'étang"},
+  {t:"Marché forain de Saint-André",d:"l'ambiance péi du matin"},
+  {t:"Canyoning à Sainte-Suzanne",d:"sensations en rivière",pep:"Run Évasion · dès 45 €"}
+ ],
+ midi:[
+  {t:"Ti-resto « Chez Mémé »",d:"cari camaron, les pieds dans le vert",pep:"Partenaire Pépite · −10%"},
+  {t:"Pique-nique au kiosque",d:"kart kabri sorti du coffre"},
+  {t:"Camion-bar de Bras-Panon",d:"bouchons &amp; sandwichs péi",pep:"Partenaire Pépite"},
+  {t:"Table d'hôte à Salazie",d:"chouchou farci maison",pep:"Partenaire Pépite · sur résa"}
+ ],
+ aprem:[
+  {t:"Anse des Cascades — Ste-Rose",d:"balade + kiosques sous cocotiers"},
+  {t:"Vanilleraie de Bois-Blanc",d:"visite guidée parfumée",pep:"Partenaire Pépite · −15%"},
+  {t:"Cascade Niagara — Ste-Suzanne",d:"baignade selon le débit"},
+  {t:"Takamaka — point de vue",d:"les gorges vertigineuses"}
+ ],
+ soir:[
+  {t:"Coucher de soleil à Takamaka",d:"point de vue sur les gorges"},
+  {t:"Apéro bord de mer — Ste-Rose",d:"snack péi face à l'océan",pep:"Partenaire Pépite"},
+  {t:"Retour tranquille",d:"on rentre se reposer"}
+ ]
+};
+const JORDER=['matin','midi','aprem','soir'], JLABEL={matin:'Matin',midi:'Midi',aprem:'Aprem',soir:'Soir'};
+let journeeState={matin:{i:0,on:true},midi:{i:0,on:true},aprem:{i:0,on:true},soir:{i:0,on:true}};
+function renderJournee(){
+  const el=document.getElementById('journee'); if(!el) return;
+  let free=0,pep=0,h='<div class="prog">';
+  JORDER.forEach(m=>{
+    const s=journeeState[m], alts=JMOMENTS[m], a=alts[s.i%alts.length];
+    if(s.on){ a.pep?pep++:free++; }
+    h+=`<div class="moment ${s.on?'':'off'}"><button class="h hbtn" onclick="toggleMoment('${m}')">${JLABEL[m]}</button><div style="flex:1;min-width:0">`;
+    if(s.on){ h+=`<div class="ct">${a.t}</div><div class="cs">${a.d}</div>${a.pep?`<span class="tag-pep">🎟️ ${a.pep}<span class="rb">Réserver ›</span></span>`:`<span class="tag-free">Gratuit</span>`}`; }
+    else { h+=`<div class="cs" style="padding:5px 0">— moment libre —</div>`; }
+    h+=`</div>`;
+    if(s.on) h+=`<button class="reroll" onclick="rerollMoment('${m}')" title="Une autre idée">↻</button>`;
+    h+=`</div>`;
+  });
+  h+='</div>';
+  h+=`<div class="postit" style="margin-top:12px">${free} gratuit${free>1?'s':''} + ${pep} partenaire${pep>1?'s':''} · clique un moment pour l'enlever · ↻ pour une autre idée</div>`;
+  el.innerHTML=h;
+}
+function rerollMoment(m){ journeeState[m].i++; renderJournee(); if(navigator.vibrate)navigator.vibrate(8); }
+function toggleMoment(m){ journeeState[m].on=!journeeState[m].on; renderJournee(); }
+
 function buildBookmarks(){
   bmWrap.innerHTML=PAGES.map((p,i)=>
     `<button class="bm ${i===cur?'actif':''}" style="background:${p.accent}" data-i="${i}"><small>${i+1}</small>${courts[i]||''}</button>`).join('');
